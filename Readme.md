@@ -86,6 +86,11 @@ type=USER_CMD msg=audit(04/26/20 23:40:56.960:1630) : pid=6838 uid=vagrant auid=
 type=USER_CMD msg=audit(04/26/20 23:41:04.738:1636) : pid=6844 uid=vagrant auid=vagrant ses=6 subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 msg='cwd=/home/vagrant cmd=less /mnt/logging/192.168.10.22/nginx_access.log terminal=pts/0 res=success' 
 ```
 
+#### Как запустить
+
+```git clone git@github.com:staybox/otus_dz13.git && cd otus_dz13 && vagrant up```
+
+
 **Итого: Задание выполнено**
 
 
