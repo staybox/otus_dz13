@@ -137,12 +137,6 @@ Vagrant.configure("2") do |config|
 
        sudo restorecon -Rv /mnt/logging/192.168.10.22/
 
-       #sudo sysctl -w net.ipv4.conf.all.rp_filter=0
-
-       #sudo sysctl -w net.ipv4.conf.default.rp_filter=0
-
-       #sudo semanage -a -t syslogd_port_t -p tcp 514
-
        sudo firewall-cmd --permanent --add-port=514/udp; sudo firewall-cmd --permanent --add-port=514/tcp
 
        sudo firewall-cmd --permanent --add-port=60/udp; sudo firewall-cmd --permanent --add-port=60/tcp; sudo firewall-cmd --reload
