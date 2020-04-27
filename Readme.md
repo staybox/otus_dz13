@@ -25,8 +25,9 @@
 5 - за полную настройку
 6 - если выполнено задание со звездочкой 
 
+#### Выполнение ДЗ
 
-1. На веб-сервере WEB настроено:
+**1. На веб-сервере WEB настроено:**
 - nginx отправляет логи ошибок и логи доступа на сервер хранения логов (log:192.168.10.23), логи ошибок также сохраняются локально в ```/var/log/nginx/error.log``` (настраивается в конфигурационном файле ```/etc/nginx/nginx.conf```):
 ```
 access_log syslog:server=192.168.10.23:514,tag=nginx_access main;
@@ -37,7 +38,7 @@ error_log /var/log/nginx/error.log crit;
 - настроен аудит конфигурационного файла nginx.conf с помощью audit, данные отправляются на сервер хранения логов (log:192.168.10.23)
 
 
-2. На сервере хранения логов настроено:
+**2. На сервере хранения логов настроено:**
 - настроен rsyslog для приема логов с веб-сервера и сохранения их в папку ```/mnt/logging/192.168.10.22```:
 ```
 [vagrant@log ~]$ sudo ls -l /mnt/logging/192.168.10.22/
@@ -85,6 +86,7 @@ type=USER_CMD msg=audit(04/26/20 23:40:56.960:1630) : pid=6838 uid=vagrant auid=
 type=USER_CMD msg=audit(04/26/20 23:41:04.738:1636) : pid=6844 uid=vagrant auid=vagrant ses=6 subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 msg='cwd=/home/vagrant cmd=less /mnt/logging/192.168.10.22/nginx_access.log terminal=pts/0 res=success' 
 ```
 
+**Итого: Задание выполнено**
 
 
 
