@@ -103,7 +103,7 @@ type=USER_CMD msg=audit(04/26/20 23:41:04.738:1636) : pid=6844 uid=vagrant auid=
 ```git clone git@github.com:staybox/otus_dz13.git && cd otus_dz13 && vagrant up```
 
 
-**Итого: Задание выполнено**
+**Итого: Задание выполнено (в том числе задание со звездкочкой)**
 
 
 
