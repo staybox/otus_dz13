@@ -94,10 +94,9 @@ type=USER_CMD msg=audit(04/26/20 23:41:04.738:1636) : pid=6844 uid=vagrant auid=
 
 
 **Скриншоты:**
-![image](https://github.com/staybox/otus_dz13/screenshots/elk-stats.png)
+![image](https://raw.githubusercontent.com/staybox/otus_dz13/screenshots/elk-stats.png)
 
-![image](https://github.com/staybox/otus_dz13/screenshots/log-elk.png)
-
+![image](https://raw.githubusercontent.com/staybox/otus_dz13/screenshots/log-elk.png)
 
 #### Как запустить
 
