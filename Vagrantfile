@@ -146,4 +146,90 @@ Vagrant.configure("2") do |config|
     SHELL
 
   end
+
+   config.vm.define "elk" do |elk|
+
+    elk.vm.box = "centos/7"
+
+    elk.vm.network "private_network", ip: "192.168.10.24"
+
+    elk.vm.hostname = "elk"
+
+    elk.vm.provider :virtualbox do |vb|
+
+      vb.customize ["modifyvm", :id, "--memory", "2048"]
+
+      vb.customize ["modifyvm", :id, "--cpus", "4"]
+
+      end
+
+    elk.vm.provision "shell", inline: <<-SHELL
+
+       mkdir -p ~root/.ssh; cp ~vagrant/.ssh/auth* ~root/.ssh
+
+       sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config
+
+       systemctl restart sshd
+
+       timedatectl set-timezone Europe/Moscow
+
+       yum install epel-release -y
+
+       sudo setenforce 0; sudo sed -i 's/=enforcing/=disabled/g' /etc/selinux/config
+
+       sudo rpm --import https://artifacts.elastic.co/GPG-KEY-elasticsearch
+
+       # Создание файла оф. репозитория
+       cat <<-'EOF' > /etc/yum.repos.d/elasticsearch.repo
+[elasticsearch-7.x]
+name=Elasticsearch repository for 7.x packages
+baseurl=https://artifacts.elastic.co/packages/7.x/yum
+gpgcheck=1
+gpgkey=https://artifacts.elastic.co/GPG-KEY-elasticsearch
+enabled=1
+autorefresh=1
+type=rpm-md
+EOF
+       # Установка компонентов
+       sudo yum check-update; sudo yum install ntp -y && systemctl start ntpd && systemctl enable ntpd
+
+       sudo yum -y install java-openjdk-devel java-openjdk nano firewalld audit audispd-plugins policycoreutils-python; sudo systemctl enable firewalld && sudo systemctl start firewalld
+
+       # Создание папки для хранения логов с машины которая их генерирует (192.168.10.22)
+       sudo mkdir -p /mnt/logging/192.168.10.22; sudo semanage fcontext -a -t var_log_t '/mnt/logging/192.168.10.22(/.*)?'; sudo restorecon -Rv /mnt/logging/192.168.10.22/
+
+       # Установка правил файервола для доступа к rsyslog и kibana извне
+       sudo firewall-cmd --permanent --add-port=514/udp; sudo firewall-cmd --permanent --add-port=514/tcp; sudo firewall-cmd --permanent --add-port=5601/tcp; sudo firewall-cmd --reload
+       
+       # Установка компонентов основного стека логирования
+       sudo yum install --enablerepo=elasticsearch-7.x elasticsearch kibana filebeat -y; sudo filebeat modules enable nginx
+
+
+    SHELL
+
+    elk.vm.provision "file", source: "./files/elk-rsyslog.conf", destination: "/tmp/rsyslog.conf"
+
+    elk.vm.provision "shell", path: "./files/sed.sh"
+
+    elk.vm.provision "shell", inline: <<-SHELL
+
+    mv /tmp/rsyslog.conf /etc/rsyslog.conf
+
+    sudo chown root:root /etc/rsyslog.conf; sudo chmod 644 /etc/rsyslog.conf
+
+    sudo systemctl daemon-reload; sudo systemctl enable elasticsearch; sudo systemctl enable filebeat; sudo systemctl enable kibana;
+
+    sudo systemctl start elasticsearch; sudo systemctl start filebeat; sudo systemctl start kibana;
+
+    sleep 60
+
+    # Импортируем индекс для kibana (необязательно)
+    sudo curl -X POST "localhost:5601/api/saved_objects/_import" -H "kbn-xsrf: true" --form file=@/vagrant/files/export.ndjson
+
+    sudo reboot
+
+    SHELL
+
+    end
+
 end

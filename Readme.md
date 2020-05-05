@@ -86,6 +86,19 @@ type=USER_CMD msg=audit(04/26/20 23:40:56.960:1630) : pid=6838 uid=vagrant auid=
 type=USER_CMD msg=audit(04/26/20 23:41:04.738:1636) : pid=6844 uid=vagrant auid=vagrant ses=6 subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 msg='cwd=/home/vagrant cmd=less /mnt/logging/192.168.10.22/nginx_access.log terminal=pts/0 res=success' 
 ```
 
+**3. На сервере отображения логов настроено:**
+- rsyslog - собирает данные с сервера web nginx логи (192.168.10.22)
+- filebeat - настроен только модуль nginx (```/etc/filebeat/modules.d/nginx.yml```). Данный компонент "родной" для ELK стэка. На этом конкретном примере filebeat парсит файлы статистики nginx, который получает и первично обрабатывает rsyslog.
+- elasticsearch - NOSQL движок, который хранит в себе данных, получаемые из различных источников, в нашем случае данные приходят с filebeat
+- kibana - графический интерфейс для отображения данных из elasticsearch
+
+
+**Скриншоты:**
+![image](https://github.com/staybox/otus_dz13/screenshots/elk-stats.png)
+
+![image](https://github.com/staybox/otus_dz13/screenshots/log-elk.png)
+
+
 #### Как запустить
 
 ```git clone git@github.com:staybox/otus_dz13.git && cd otus_dz13 && vagrant up```
